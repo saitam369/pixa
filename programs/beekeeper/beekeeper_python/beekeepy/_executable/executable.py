@@ -18,14 +18,14 @@ if TYPE_CHECKING:
     from loguru import Logger
 
 
-class Closable:
+class Closeable:
     @abstractmethod
     def close(self) -> None:
         ...
 
 
 class AutoCloser(ContextSync[None]):
-    def __init__(self, obj_to_close: Closable | None, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, obj_to_close: Closeable | None, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.__obj_to_close = obj_to_close
 
@@ -40,7 +40,7 @@ class AutoCloser(ContextSync[None]):
 ConfigT = TypeVar("ConfigT", bound=Config)
 
 
-class Executable(Closable, Generic[ConfigT]):
+class Executable(Closeable, Generic[ConfigT]):
     def __init__(self, executable_path: Path, working_directory: Path, logger: Logger) -> None:
         if working_directory.exists():
             assert working_directory.is_dir(), "Given path is not pointing to directory"
@@ -57,7 +57,7 @@ class Executable(Closable, Generic[ConfigT]):
 
     @property
     def pid(self) -> int:
-        assert self.__process is not None
+        assert self.__process is not None, "Process is not running, nothing to return"
         return self.__process.pid
 
     @property
