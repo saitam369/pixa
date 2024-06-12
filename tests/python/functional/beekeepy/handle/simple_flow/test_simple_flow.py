@@ -44,7 +44,7 @@ class WalletInfoWithKeysToImport(WalletInfo):
             assert wax_result.status == wax.python_error_code.ok
             result.keys.append(
                 KeyPair(
-                    public_key=PublicKey("STM" + wax_result.result.decode("ascii")),
+                    public_key=PublicKey(wax_result.result.decode("ascii")),
                     private_key=PrivateKey(private_key),
                 )
             )
