@@ -4,13 +4,15 @@ from dataclasses import dataclass, field
 from shutil import move
 from typing import TYPE_CHECKING, TextIO, cast
 
+from helpy import ContextSync
+
 if TYPE_CHECKING:
     from pathlib import Path
     from types import TracebackType
 
 
 @dataclass
-class StreamRepresentation:
+class StreamRepresentation(ContextSync[TextIO]):
     filename: str
     path: Path | None = None
     stream: TextIO | None = None
@@ -21,18 +23,19 @@ class StreamRepresentation:
         return self.path
 
     def __get_stream(self) -> TextIO:
-        assert self.stream is not None
+        assert self.stream is not None, "Unable to get stream, as it is not opened"
         return self.stream
 
     def backup(self) -> None:
         path = self.__get_path()
-        assert self.stream is None, "Cannot backup opened file"
+        assert self.stream is None, "Cannot back up opened file"
         move(path, path.with_name(f"{self.filename}_{self._backup_count}.log"))
         self._backup_count += 1
 
     def open_stream(self, mode: str = "wt") -> TextIO:
+        assert self.stream is None, "Stream is already opened"
         self.stream = cast(TextIO, self.__get_path().open(mode))
-        assert not self.stream.closed
+        assert not self.stream.closed, f"Failed to open stream: `{self.stream.errors}`"
         return self.stream
 
     def close_stream(self) -> None:
@@ -42,15 +45,10 @@ class StreamRepresentation:
     def set_path_for_dir(self, dir_path: Path) -> None:
         self.path = dir_path / f"{self.filename}.log"
 
-    def __enter__(self) -> TextIO:
+    def _enter(self) -> TextIO:
         return self.open_stream()
 
-    def __exit__(
-        self,
-        _: type[BaseException] | None,
-        __: BaseException | None,
-        ___: TracebackType | None,
-    ) -> None:
+    def _finally(self) -> None:
         self.close_stream()
 
     def __contains__(self, text: str) -> bool:
