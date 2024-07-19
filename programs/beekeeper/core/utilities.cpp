@@ -112,6 +112,12 @@ namespace fc
     vo = v;
   }
 
+  void to_variant( const beekeeper::get_status_return& var, fc::variant& vo )
+  {
+    variant v = mutable_variant_object( "status", var.status );
+    vo = v;
+  }
+
   void from_variant( const fc::variant& var,  beekeeper::wallet_data& vo )
   {
    from_variant( var, vo.cipher_keys );

@@ -13,6 +13,7 @@ namespace beekeeper {
 
 beekeeper_app::beekeeper_app()
 {
+  app_status = std::make_shared<status>();
   app.init_signals_handler();
 }
 
@@ -171,6 +172,8 @@ init_data beekeeper_app::initialize( int argc, char** argv )
 
     api_ptr = std::make_unique<beekeeper::beekeeper_wallet_api>( wallet_manager_ptr, app, unlock_interval );
 
+    set_status( "beekeeper is starting" );
+
     return _initialization;
   }
 }
@@ -187,6 +190,8 @@ void beekeeper_app::start()
   _webserver_plugin.start_webserver();
 
   app.startup();
+
+  set_status( "beekeeper is ready" );
 
   ilog("beekeeper is waiting");
   app.wait( true/*log*/ );
@@ -235,6 +240,7 @@ std::shared_ptr<beekeeper::beekeeper_wallet_manager> beekeeper_app::create_walle
   instance = std::make_shared<beekeeper_instance>( app, cmd_wallet_dir );
   return std::make_shared<beekeeper::beekeeper_wallet_manager>( std::make_shared<session_manager>(), instance,
                                                                        cmd_wallet_dir, cmd_unlock_timeout, cmd_session_limit,
+                                                                       app_status,
                                                                        [this]() { app.kill(); } );
 }
 

@@ -23,6 +23,8 @@ class beekeeper_app: public beekeeper_app_base
 
     std::unique_ptr<beekeeper::beekeeper_wallet_api> api_ptr;
 
+    std::shared_ptr<status> app_status;
+
     appbase::application app;
 
     std::string check_version();
@@ -36,6 +38,12 @@ class beekeeper_app: public beekeeper_app_base
     std::shared_ptr<beekeeper::beekeeper_wallet_manager> create_wallet( const boost::filesystem::path& cmd_wallet_dir, uint64_t cmd_unlock_timeout, uint32_t cmd_session_limit ) override;
 
     bool should_start_loop() const override;
+
+    void set_status( const std::string& new_status )
+    {
+      FC_ASSERT( app_status );
+      app_status->status = new_status;
+    }
 
   protected:
 

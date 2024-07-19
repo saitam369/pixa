@@ -3,10 +3,12 @@
 namespace beekeeper {
 
 beekeeper_wallet_manager::beekeeper_wallet_manager( std::shared_ptr<session_manager_base> sessions, std::shared_ptr<beekeeper_instance_base> instance, const boost::filesystem::path& cmd_wallet_dir, uint64_t cmd_unlock_timeout, uint32_t cmd_session_limit,
+                                                    std::shared_ptr<status> app_status,
                                                     close_all_sessions_action_method&& method
                                                   )
                           : unlock_timeout( cmd_unlock_timeout ), session_limit( cmd_session_limit ),
                             wallet_directory( cmd_wallet_dir ),
+                            app_status( app_status ),
                             close_all_sessions_action( method ),
                             sessions( sessions ), instance( instance )
 {
@@ -122,6 +124,11 @@ info beekeeper_wallet_manager::get_info( const std::string& token )
 version beekeeper_wallet_manager::get_version()
 {
   return { utility::get_revision() };
+}
+
+status beekeeper_wallet_manager::get_status()
+{
+  return { app_status ? ( *app_status ) : status() };
 }
 
 string beekeeper_wallet_manager::create_session( const std::optional<std::string>& salt )

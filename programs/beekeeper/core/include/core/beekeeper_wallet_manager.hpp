@@ -36,6 +36,7 @@ public:
    */
   beekeeper_wallet_manager( std::shared_ptr<session_manager_base> sessions, std::shared_ptr<beekeeper_instance_base> instance,
                             const boost::filesystem::path& cmd_wallet_dir, uint64_t cmd_unlock_timeout, uint32_t cmd_session_limit,
+                            std::shared_ptr<status> app_status = std::shared_ptr<status>(),
                             close_all_sessions_action_method&& method = [](){} );
 
   beekeeper_wallet_manager(const beekeeper_wallet_manager&) = delete;
@@ -212,6 +213,13 @@ public:
    */
   version get_version();
 
+  /**
+   * Gets current beekeeper's status
+   * 
+   * @return      Current status
+   */
+  status get_status();
+
   /** Create a session by a token's generating. That token is used in every endpoint that requires an unlocking wallet.
    *
    * @param salt                    Random data that is used as an additional input so as to create a token. Optional.
@@ -272,6 +280,8 @@ private:
   uint32_t  session_limit = 0;
 
   const boost::filesystem::path wallet_directory;
+
+  std::shared_ptr<status> app_status;
 
   close_all_sessions_action_method  close_all_sessions_action;
 

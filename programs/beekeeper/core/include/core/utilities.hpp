@@ -54,6 +54,11 @@ struct version
   std::string version;
 };
 
+struct status
+{
+  std::string status;
+};
+
 namespace types
 {
   using basic_method_type         = std::function<void( const std::string& )>;
@@ -224,6 +229,8 @@ using get_info_args   = session_token_type;
 using get_info_return = info;
 using get_version_args   = void_type;
 using get_version_return = version;
+using get_status_args   = void_type;
+using get_status_return = status;
 
 struct create_session_args
 {
@@ -315,6 +322,7 @@ namespace fc
   void to_variant( const beekeeper::encrypt_data_return& var, fc::variant& vo );
   void to_variant( const beekeeper::decrypt_data_return& var, fc::variant& vo );
   void to_variant( const beekeeper::get_version_return& var, fc::variant& vo );
+  void to_variant( const beekeeper::get_status_return& var, fc::variant& vo );
 
   void from_variant( const fc::variant& var, beekeeper::wallet_data& vo );
   void to_variant( const beekeeper::wallet_data& var, fc::variant& vo );
@@ -326,6 +334,7 @@ FC_REFLECT( beekeeper::wallet_details, (name)(unlocked) )
 FC_REFLECT( beekeeper::public_key_details, (public_key) )
 FC_REFLECT( beekeeper::info, (now)(timeout_time) )
 FC_REFLECT( beekeeper::version, (version) )
+FC_REFLECT( beekeeper::status, (status) )
 
 FC_REFLECT( beekeeper::void_type, )
 FC_REFLECT( beekeeper::session_token_type, (token) )

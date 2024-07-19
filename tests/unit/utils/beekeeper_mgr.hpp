@@ -12,6 +12,7 @@ using beekeeper_wallet_manager  = beekeeper::beekeeper_wallet_manager;
 using beekeeper_wallet          = beekeeper::beekeeper_wallet;
 using session_manager           = beekeeper::session_manager;
 using beekeeper_instance        = beekeeper::beekeeper_instance;
+using status                    = beekeeper::status;
 
 namespace test_utils
 {
@@ -58,6 +59,7 @@ namespace test_utils
                                         dir,
                                         cmd_unlock_timeout,
                                         cmd_session_limit,
+                                        std::make_shared<status>(),
                                         std::move( method )
                                       );
     }
@@ -69,6 +71,7 @@ namespace test_utils
                                                                                       dir,
                                                                                       cmd_unlock_timeout,
                                                                                       cmd_session_limit,
+                                                                                      std::make_shared<status>(),
                                                                                       std::move( method )
                                                                                     ) );
     }
